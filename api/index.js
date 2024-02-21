@@ -7,6 +7,7 @@ import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import postRouter from "./routes/post.routs.js";
 import commentRouter from "./routes/comment.routes.js";
+import path from 'path'
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,8 @@ mongoose.connect(process.env.MONGO_URL)
     .catch((error) => {
         console.log(error.message);
     });
+
+const __dirname = path.resolve()
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000!");
@@ -32,6 +35,12 @@ app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
 app.use("/api/post", postRouter)
 app.use("/api/comment", commentRouter)
+
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
 
 //middleware
 app.use((err, req, res, next) => {
